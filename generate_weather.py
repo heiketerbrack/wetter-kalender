@@ -125,6 +125,7 @@ def format_windows(groups):
 params = {
     "latitude": LAT,
     "longitude": LON,
+    "current": ",".join(["temperature_2m", "apparent_temperature", "weather_code"]),
     "hourly": ",".join([
         "temperature_2m",
         "weather_code",
@@ -142,6 +143,11 @@ with urlopen(url, timeout=30) as response:
     data = json.load(response)
 
 hourly = data["hourly"]
+current = data.get("current", {})
+current_temp = current.get("temperature_2m")
+current_feels = current.get("apparent_temperature")
+current_code = current.get("weather_code")
+current_icon, current_desc = WEATHER.get(current_code, ("🌡️", "Wetter"))
 
 time_index = {
     timestamp: i
@@ -213,8 +219,16 @@ for day_offset in range(FORECAST_DAYS):
             f"{hour:02d}:00 – {temp} °C · Regen {prob}% · {mm} mm"
         )
 
+    current_line = ""
+    if current_temp is not None:
+        current_line = f"Aktuell: {current_icon} {round(current_temp)} °C · {current_desc}"
+        if current_feels is not None:
+            current_line += f" · gefühlt {round(current_feels)} °C"
+        current_line += "\n\n"
+
     details = (
         f"Wetter in {LOCATION}\n\n"
+        + current_line
         f"08:00 Uhr: {temp08} °C · {desc08}\n"
         f"14:00 Uhr: {temp14} °C · {desc14}\n\n"
         f"Regen zwischen 08:00 und 14:00 Uhr:\n"
