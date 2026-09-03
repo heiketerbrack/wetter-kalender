@@ -229,7 +229,7 @@ for day_offset in range(FORECAST_DAYS):
     details = (
         f"Wetter in {LOCATION}\n\n"
         + current_line
-        f"08:00 Uhr: {temp08} °C · {desc08}\n"
+        + f"08:00 Uhr: {temp08} °C · {desc08}\n"
         f"14:00 Uhr: {temp14} °C · {desc14}\n\n"
         f"Regen zwischen 08:00 und 14:00 Uhr:\n"
         f"{rain_text}\n"
